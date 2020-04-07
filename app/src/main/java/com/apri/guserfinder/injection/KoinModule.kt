@@ -1,9 +1,11 @@
 package com.apri.guserfinder.injection
 
 import com.apri.guserfinder.datasource.GithubAPI
+import com.apri.guserfinder.page.MainViewModel
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -18,6 +20,7 @@ import java.util.concurrent.TimeUnit
 //
 
 val viewModelModule = module {
+    viewModel { MainViewModel() }
 }
 
 
