@@ -1,6 +1,12 @@
 package com.apri.guserfinder
 
 import android.app.Application
+import com.apri.guserfinder.injection.apiModule
+import com.apri.guserfinder.injection.viewModelModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
 //
 //  Project: GUserFinder
@@ -14,5 +20,10 @@ class GUserFinderApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        startKoin {
+            androidLogger(Level.DEBUG)
+            androidContext(this@GUserFinderApp)
+            modules(listOf(viewModelModule, apiModule))
+        }
     }
 }

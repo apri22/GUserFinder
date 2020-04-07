@@ -1,7 +1,7 @@
 package com.apri.guserfinder.page
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.apri.guserfinder.R
 
 class MainActivity : AppCompatActivity() {
