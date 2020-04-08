@@ -1,7 +1,8 @@
-package com.apri.guserfinder.page
+package com.apri.guserfinder.main
 
 import androidx.lifecycle.MutableLiveData
 import com.apri.guserfinder.extension.SingleLiveEvent
+import com.apri.guserfinder.main.viewholders.UserViewModel
 import com.apri.guserfinder.models.User
 
 //
@@ -13,8 +14,9 @@ import com.apri.guserfinder.models.User
 //
 
 interface IMainViewModel {
-    val userViewModels: MutableLiveData<List<User>>
+    val userViewModels: MutableLiveData<List<UserViewModel>>
     val findUserErrors: SingleLiveEvent<Exception>
+    val hideLoading: SingleLiveEvent<Boolean>
 
     fun findUser(query: String)
     fun loadMoreUser(query: String)

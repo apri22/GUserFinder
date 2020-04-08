@@ -1,10 +1,10 @@
-package com.apri.guserfinder.page
+package com.apri.guserfinder.main
 
 import androidx.lifecycle.MutableLiveData
 import com.apri.guserfinder.base.BaseViewModel
 import com.apri.guserfinder.datasource.GithubAPI
 import com.apri.guserfinder.extension.*
-import com.apri.guserfinder.models.User
+import com.apri.guserfinder.main.viewholders.UserViewModel
 import org.koin.core.inject
 
 //
@@ -16,8 +16,9 @@ import org.koin.core.inject
 //
 
 class MainViewModel : BaseViewModel(), IMainViewModel {
-    override val userViewModels: MutableLiveData<List<User>> = MutableLiveData()
+    override val userViewModels: MutableLiveData<List<UserViewModel>> = MutableLiveData()
     override val findUserErrors: SingleLiveEvent<Exception> = SingleLiveEvent()
+    override val hideLoading: SingleLiveEvent<Boolean> = SingleLiveEvent()
 
     val githubAPI by inject<GithubAPI>()
     var page: Int = 0
@@ -37,9 +38,13 @@ class MainViewModel : BaseViewModel(), IMainViewModel {
         uiJob {
             doAsyncNetworkCall { githubAPI.findUser(query, page) }
                 .awaitForResult()
-                .withSuccessResult {
-                    userViewModels.postAppending(it.items)
+                .withSuccessResult { result ->
+                    hideLoading.postValue(true)
+                    val viewModels = result.items.map { UserViewModel(it) }
+                    userViewModels.postAppending(viewModels)
                 }.whenFailure {
+                    hideLoading.postValue(true)
+                    this@MainViewModel.page--
                     findUserErrors.postValue(it)
                 }
         }

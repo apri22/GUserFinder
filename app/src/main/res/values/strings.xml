@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GUserFinder</string>
+    <string name="data_not_found_label">Data not found</string>
 </resources>

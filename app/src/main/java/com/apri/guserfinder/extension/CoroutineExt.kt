@@ -2,7 +2,10 @@ package com.apri.guserfinder.extension
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.apri.guserfinder.datasource.APIException
+import com.apri.guserfinder.datasource.ApiError
 import com.apri.guserfinder.datasource.ApiResult
+import com.google.gson.Gson
 import kotlinx.coroutines.*
 import retrofit2.Response
 
@@ -42,11 +45,21 @@ fun <R> ApiResult<R>.withSuccessResult(block: (R) -> Unit): ApiResult<R> {
 fun <R> ApiResult<R>.whenFailure(block: (Exception) -> Unit) {
     if (!this.isSuccess) {
         exception?.notNull { block(it) }
+    } else if (response?.body() == null && response?.errorBody() != null) {
+        val jsonError = response?.errorBody()?.string()
+        val apiError = Gson().fromJson<ApiError>(jsonError, ApiError::class.java)
+        block(APIException(apiError))
     }
 }
 
 fun ViewModel.uiJob(block: suspend CoroutineScope.() -> Unit): Job {
     return viewModelScope.launch(Dispatchers.Main) {
         block()
+    }
+}
+
+fun launchMain(block: suspend () -> Unit) {
+    GlobalScope.launch(Dispatchers.Main) {
+        block.invoke()
     }
 }

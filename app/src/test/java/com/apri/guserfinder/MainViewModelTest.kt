@@ -1,11 +1,15 @@
 package com.apri.guserfinder
 
+import androidx.lifecycle.MutableLiveData
 import com.apri.guserfinder.datasource.GithubAPI
+import com.apri.guserfinder.extension.SingleLiveEvent
 import com.apri.guserfinder.models.DataResult
 import com.apri.guserfinder.models.User
-import com.apri.guserfinder.page.MainViewModel
+import com.apri.guserfinder.main.MainViewModel
+import com.apri.guserfinder.main.viewholders.UserViewModel
 import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.SpyK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEmpty
@@ -67,7 +71,7 @@ class MainViewModelTest : BaseUnitTest() {
 
     @Test
     fun `fetch user when success`() = testDispatcher.runBlockingTest {
-        val user = User("Test", "url", "html")
+        val user = User("Test", "url")
         val result = DataResult(1, listOf(user))
         val response: Response<DataResult<List<User>>> = mockk()
         every { response.body() } returns result
@@ -78,7 +82,7 @@ class MainViewModelTest : BaseUnitTest() {
         viewModel.fetchUsers("Key", 1)
 
         coVerify(exactly = 1) { githubAPI.findUser(any(), any()) }
-        viewModel.userViewModels.value?.shouldContain(user)
+        viewModel.userViewModels.value?.get(0)?.user shouldBeEqualTo user
         viewModel.userViewModels.value?.size shouldBeEqualTo 1
         queryArg.captured shouldBeEqualTo "Key"
         pageArg.captured shouldBeEqualTo 1
@@ -93,6 +97,7 @@ class MainViewModelTest : BaseUnitTest() {
         val pageArg = slot<Int>()
         coEvery { githubAPI.findUser(capture(queryArg), capture(pageArg)) } returns response
 
+        viewModel.page = 1
         viewModel.fetchUsers("Key", 1)
 
         coVerify(exactly = 1) { githubAPI.findUser(any(), any()) }
@@ -100,5 +105,6 @@ class MainViewModelTest : BaseUnitTest() {
         viewModel.userViewModels.value shouldBeEqualTo null
         queryArg.captured shouldBeEqualTo "Key"
         pageArg.captured shouldBeEqualTo 1
+        viewModel.page shouldBeEqualTo 0
     }
 }

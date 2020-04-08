@@ -1,7 +1,7 @@
 package com.apri.guserfinder.injection
 
 import com.apri.guserfinder.datasource.GithubAPI
-import com.apri.guserfinder.page.MainViewModel
+import com.apri.guserfinder.main.MainViewModel
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -24,7 +24,7 @@ val viewModelModule = module {
 }
 
 
-const val BASE_URL = "https://api.github.com//"
+const val BASE_URL = "https://api.github.com/"
 val apiModule = module {
     single {
         OkHttpClient.Builder()

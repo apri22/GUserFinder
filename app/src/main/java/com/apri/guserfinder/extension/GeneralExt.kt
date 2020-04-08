@@ -1,9 +1,6 @@
 package com.apri.guserfinder.extension
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 
 //
 //  Project: GUserFinder
@@ -22,11 +19,6 @@ fun <T> MutableLiveData<List<T>>.postAppending(datas: List<T>?) {
     } else {
         this.postValue(datas)
     }
-}
-
-fun <T> LiveData<T>.observe(lifecycleOwner: LifecycleOwner, block: (T) -> Unit) {
-    value.notNull { block(it) }
-    this.observe(lifecycleOwner, Observer { block(it) })
 }
 
 fun <T> T?.notNull(f: (it: T) -> Unit) {
