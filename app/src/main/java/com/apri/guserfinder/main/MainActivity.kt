@@ -1,7 +1,6 @@
 package com.apri.guserfinder.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -66,14 +65,11 @@ class MainActivity : AppCompatActivity() {
             object : RecyclerView.OnScrollListener() {
                 val visibleThreshold = 1
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                    Log.d("ScrollState", "Bottom ${recyclerView.canScrollVertically(1)}")
                     val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition()
                     val totalItemCount = linearLayoutManager.itemCount
 
-                    if (!adapter.isLoading && adapter.viewModels.isNotEmpty() &&
-//                        !recyclerView.canScrollVertically(1) &&
-                        dy > 0 &&
+                    if (!adapter.isLoading && adapter.viewModels.isNotEmpty() && dy > 0 &&
                         totalItemCount <= (lastVisibleItem + visibleThreshold)
                     ) {
                         adapter.showLoading()
@@ -89,6 +85,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshFindUser(query: String) {
+        if (query.isEmpty()) {
+            swipeRefresh.isRefreshing = false
+            return
+        }
+
         lastQuery = query
         llInfo.visibility = View.GONE
         swipeRefresh.isRefreshing = true
