@@ -1,0 +1,54 @@
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = '0.8.3'
+}
+
+android.testOptions {
+    unitTests {
+        includeAndroidResources = true
+    }
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
+
+task jacocoTestReport(type: JacocoReport) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    // List of files which must be excluded from the coverage analysis
+    def fileFilter = [
+            '**/R.class',
+            '**/R$*.class',
+            '**/BuildConfig.*',
+            '**/*Activity*',
+            '**/*App*',
+            '**/*Adapter*',
+            '**/Manifest*.*',
+            '**/*Test*.*',
+            'android/**/*.*',
+            '**/injection/*.*',
+            '**/extension/*.*',
+            '**/datasource/*.*',
+            '**/common/*.*',
+            '**/base/*.*',
+            '**/viewholders/*.*',
+            '**/pages/*.*',
+            '**/models/*.*'
+    ]
+    def javaClasses = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
+    def kotlinClasses = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug", excludes: fileFilter)
+    def javaSrc = "$project.projectDir/src/main/java"
+    def kotlinSrc = "$project.projectDir/src/main/kotlin"
+
+    sourceDirectories.from = files([javaSrc, kotlinSrc])
+    classDirectories.from = files([javaClasses, kotlinClasses])
+    executionData.from = fileTree(dir: project.buildDir, includes: [
+            'jacoco/testDebugUnitTest.exec'
+    ])
+}
