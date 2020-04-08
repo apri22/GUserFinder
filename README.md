@@ -10,7 +10,7 @@ Testing apps for find github user
 - pull to refresh
 - endless scrolling
 
-**Please use develop branch**
+**Please use master branch**
 
 To create development build just run:
 `./gradlew assembleDebug`
